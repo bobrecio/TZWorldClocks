@@ -1860,13 +1860,17 @@
                     const clock = clocks.find((item) => item.id === clockId);
                     if (!clock) return;
 
+                    /*
+                      Store the active clock ID before opening the modal.
+                      The live tick loop uses this ID to refresh the modal time.
+                    */
+                    activeDetailClockId = clockId;
                     updateClockDetails(clock);
                     detailOverlay.classList.add("open");
                     detailOverlay.setAttribute("aria-hidden", "false");
                 }
 
                 function updateClockDetails(clock) {
-                    activeDetailClockId = clockId;
                     const time = numericTime(clock.zone);
 
                     detailTitle.textContent = displayLabel(clock);
@@ -1884,10 +1888,10 @@
 
                 function refreshOpenClockDetails() {
                     if (!detailOverlay.classList.contains("open")) return;
+                    if (!activeDetailClockId) return;
 
                     const activeClock = clocks.find(
-                        (clock) =>
-                            displayLabel(clock) === detailTitle.textContent,
+                        (clock) => clock.id === activeDetailClockId,
                     );
 
                     if (activeClock) updateClockDetails(activeClock);
