@@ -1,12 +1,13 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Timezone Clock Gallery</title>
 
-        <style>
-            /*
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timezone Clock Gallery</title>
+
+    <style>
+        /*
               ============================================================
               Timezone Clock Gallery
               ------------------------------------------------------------
@@ -22,788 +23,797 @@
               ============================================================
             */
 
-            /*
+        /*
               Basic reset.
               border-box makes layout sizing easier because padding and borders
               are included inside the declared width/height.
             */
-            * {
-                box-sizing: border-box;
-            }
+        * {
+            box-sizing: border-box;
+        }
 
-            /*
+        /*
               CSS variables keep the design tokens in one place.
               If you want to reskin the gallery later, start here.
             */
-            :root {
-                --bg: #080b12;
-                --panel: rgba(255, 255, 255, 0.08);
-                --panel-strong: rgba(255, 255, 255, 0.12);
-                --border: rgba(255, 255, 255, 0.16);
-                --text: #f5f7fb;
-                --muted: #a9b4c7;
-                --muted-2: #b8c4d8;
-                --accent: #ff3045;
-                --accent-2: #ff7a18;
-                --good-drop: rgba(255, 255, 255, 0.2);
-            }
+        :root {
+            --bg: #080b12;
+            --panel: rgba(255, 255, 255, 0.08);
+            --panel-strong: rgba(255, 255, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.16);
+            --text: #f5f7fb;
+            --muted: #a9b4c7;
+            --muted-2: #b8c4d8;
+            --accent: #ff3045;
+            --accent-2: #ff7a18;
+            --good-drop: rgba(255, 255, 255, 0.2);
+        }
 
-            body {
-                margin: 0;
-                min-height: 100vh;
-                font-family:
-                    system-ui,
-                    -apple-system,
-                    BlinkMacSystemFont,
-                    "Segoe UI",
-                    sans-serif;
-                background:
-                    radial-gradient(
-                        circle at top left,
-                        #1e3a5f,
-                        transparent 35%
-                    ),
-                    radial-gradient(
-                        circle at bottom right,
-                        #3a123f,
-                        transparent 35%
-                    ),
-                    var(--bg);
-                color: var(--text);
-            }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            background:
+                radial-gradient(circle at top left,
+                    #1e3a5f,
+                    transparent 35%),
+                radial-gradient(circle at bottom right,
+                    #3a123f,
+                    transparent 35%),
+                var(--bg);
+            color: var(--text);
+        }
 
-            /*
+        /*
               Main app container.
               In compact mode we center the single clock more aggressively.
             */
-            .app {
-                width: min(1200px, 94vw);
-                margin: 0 auto;
-                padding: 34px 0 60px;
-            }
+        .app {
+            width: min(1200px, 94vw);
+            margin: 0 auto;
+            padding: 34px 0 60px;
+        }
 
-            body.compact-view .app {
-                min-height: 100vh;
-                display: grid;
-                align-content: center;
-                padding-top: 24px;
-                padding-bottom: 24px;
-            }
+        body.compact-view .app {
+            min-height: 100vh;
+            display: grid;
+            align-content: center;
+            padding-top: 24px;
+            padding-bottom: 24px;
+        }
 
-            /*
+        /*
               Header appears in gallery view only.
               Compact mode intentionally hides the title/subtitle so the view
               feels like a clean desktop clock widget.
             */
-            header {
-                text-align: center;
-                margin-bottom: 26px;
-            }
+        header {
+            text-align: center;
+            margin-bottom: 26px;
+        }
 
-            body.compact-view header {
-                display: none;
-            }
+        body.compact-view header {
+            display: none;
+        }
 
-            h1 {
-                margin: 0;
-                font-size: clamp(2rem, 5vw, 4rem);
-                letter-spacing: -0.06em;
-            }
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 5vw, 4rem);
+            letter-spacing: -0.06em;
+        }
 
-            .subtitle {
-                color: var(--muted);
-                margin-top: 8px;
-            }
+        .subtitle {
+            color: var(--muted);
+            margin-top: 8px;
+        }
 
-            /*
+        /*
               Top-level stage.
               This wraps:
               - compact control area
               - clock grid/single-clock area
               - edit controls
             */
-            .stage {
-                width: 100%;
-            }
+        .stage {
+            width: 100%;
+        }
 
-            /*
+        /*
               Compact controls are hidden by default.
               In compact mode, only the subtle edit link appears until the user
               activates editing.
             */
-            .compact-topbar {
-                display: none;
-                max-width: 620px;
-                margin: 0 auto 20px;
-                padding: 16px;
-                border-radius: 24px;
-                background: rgba(255, 255, 255, 0.075);
-                border: 1px solid rgba(255, 255, 255, 0.14);
-                box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
-                backdrop-filter: blur(14px);
-            }
+        .compact-topbar {
+            display: none;
+            max-width: 620px;
+            margin: 0 auto 20px;
+            padding: 16px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.075);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(14px);
+        }
 
-            /*
+        /*
               The compact topbar appears only while editing in compact mode.
               This is the "expanded controls" state.
             */
-            body.compact-view.edit-mode .compact-topbar {
-                display: grid;
-                gap: 14px;
-            }
+        body.compact-view.edit-mode .compact-topbar {
+            display: grid;
+            gap: 14px;
+        }
 
-            .compact-field-grid {
-                display: grid;
-                grid-template-columns: 1fr 170px auto;
-                gap: 12px;
-                align-items: end;
-            }
+        .compact-field-grid {
+            display: grid;
+            grid-template-columns: 1fr 170px auto;
+            gap: 12px;
+            align-items: end;
+        }
 
-            .field {
-                display: grid;
-                gap: 7px;
-            }
+        .field {
+            display: grid;
+            gap: 7px;
+        }
 
-            .field label {
-                color: var(--muted);
-                font-size: 0.76rem;
-                font-weight: 900;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-            }
+        .field label {
+            color: var(--muted);
+            font-size: 0.76rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
 
-            select,
-            .field select {
-                width: 100%;
-                border: 1px solid var(--border);
-                border-radius: 999px;
-                min-height: 48px;
-                padding: 0 16px;
-                color: var(--text);
-                background: rgba(255, 255, 255, 0.09);
-                outline: none;
-                font-weight: 800;
-            }
+        select,
+        .field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            min-height: 48px;
+            padding: 0 16px;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.09);
+            outline: none;
+            font-weight: 800;
+        }
 
-            select:focus {
-                border-color: rgba(255, 255, 255, 0.42);
-                box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
-            }
+        select:focus {
+            border-color: rgba(255, 255, 255, 0.42);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+        }
 
-            /*
+        /*
               General button styling.
               Kept simple and reusable.
             */
-            button,
-            .button {
-                border: 0;
-                border-radius: 999px;
-                padding: 0 24px;
-                min-height: 48px;
-                font-weight: 900;
-                cursor: pointer;
-                color: white;
-                background: linear-gradient(
-                    135deg,
+        button,
+        .button {
+            border: 0;
+            border-radius: 999px;
+            padding: 0 24px;
+            min-height: 48px;
+            font-weight: 900;
+            cursor: pointer;
+            color: white;
+            background: linear-gradient(135deg,
                     var(--accent),
-                    var(--accent-2)
-                );
-                box-shadow: 0 12px 28px rgba(255, 59, 79, 0.28);
-            }
+                    var(--accent-2));
+            box-shadow: 0 12px 28px rgba(255, 59, 79, 0.28);
+        }
 
-            /*
+        /*
               Subtle text-like button.
               This is used for the Compact mode "Edit" link so compact mode
               remains visually quiet.
             */
-            .subtle-edit-link {
-                display: none;
-                margin: 14px auto 0;
-                padding: 0;
-                min-height: auto;
-                border-radius: 0;
-                background: transparent;
-                box-shadow: none;
-                color: rgba(245, 247, 251, 0.46);
-                font-size: 0.78rem;
-                font-weight: 800;
-                letter-spacing: 0.04em;
-                text-decoration: none;
-            }
+        .subtle-edit-link {
+            display: none;
+            margin: 14px auto 0;
+            padding: 0;
+            min-height: auto;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            color: rgba(245, 247, 251, 0.46);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+        }
 
-            .subtle-edit-link:hover {
-                color: rgba(245, 247, 251, 0.82);
-                text-decoration: underline;
-            }
+        .subtle-edit-link:hover {
+            color: rgba(245, 247, 251, 0.82);
+            text-decoration: underline;
+        }
 
-            /*
+        /*
               In compact mode and not editing, this is the only visible control.
             */
-            body.compact-view:not(.edit-mode) .subtle-edit-link {
-                display: block;
-            }
+        body.compact-view:not(.edit-mode) .subtle-edit-link {
+            display: block;
+        }
 
-            /*
+        /*
               In gallery mode, show the same subtle Edit/Done link below the
               grid. This replaces the previous large gradient button.
             */
-            body.dashboard-view .edit-toggle-row .subtle-edit-link {
-                display: block;
-            }
+        body.dashboard-view .edit-toggle-row .subtle-edit-link {
+            display: block;
+        }
 
-            /*
+        /*
               Gallery edit area.
               In gallery view, the edit affordance is intentionally subtle,
               matching the compact view. When editing is active, a small control
               panel appears so the user can switch back to Compact mode.
             */
-            .edit-toggle-row {
-                display: flex;
-                justify-content: center;
-                margin: 28px 0 16px;
-            }
+        .edit-toggle-row {
+            display: flex;
+            justify-content: center;
+            margin: 28px 0 16px;
+        }
 
-            body.compact-view .edit-toggle-row {
-                display: none;
-            }
+        body.compact-view .edit-toggle-row {
+            display: none;
+        }
 
-            .gallery-edit-panel {
-                display: none;
-                max-width: 420px;
-                margin: 0 auto 16px;
-                padding: 16px;
-                border-radius: 24px;
-                background: rgba(255, 255, 255, 0.075);
-                border: 1px solid rgba(255, 255, 255, 0.14);
-                box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
-                backdrop-filter: blur(14px);
-            }
+        .gallery-edit-panel {
+            display: none;
+            max-width: 420px;
+            margin: 0 auto 16px;
+            padding: 16px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.075);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(14px);
+        }
 
-            body.dashboard-view.edit-mode .gallery-edit-panel {
-                display: grid;
-                gap: 14px;
-            }
+        body.dashboard-view.edit-mode .gallery-edit-panel {
+            display: grid;
+            gap: 14px;
+        }
 
-            /*
-              The gallery Edit/Done button uses the same quiet visual style
+        /*
+              The gallery Edit/Save button uses the same quiet visual style
               as the compact Edit link.
             */
-            .edit-toggle {
-                display: inline-block;
-            }
+        .edit-toggle {
+            display: inline-block;
+        }
 
-            body.dashboard-view.edit-mode .edit-toggle {
-                color: rgba(245, 247, 251, 0.82);
-            }
+        body.dashboard-view.edit-mode .edit-toggle {
+            color: rgba(245, 247, 251, 0.82);
+        }
 
-            /*
+
+        /*
+              Gallery configuration controls.
+              This row appears only while editing in Gallery mode. It gives the
+              user both a View dropdown and an explicit Save button, matching
+              the Compact configuration workflow.
+            */
+        .gallery-config-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        @media (max-width: 620px) {
+            .gallery-config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /*
               Clock grid.
               Flexbox keeps incomplete rows centered. CSS Grid auto-fit can
               leave the final row visually left-weighted, while flex wrapping
               naturally centers the last row.
             */
-            .grid {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 34px;
-                justify-content: center;
-                align-items: flex-start;
-            }
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 34px;
+            justify-content: center;
+            align-items: flex-start;
+        }
 
-            /*
+        /*
               Compact mode still uses the same grid element, but render()
               only puts one clock in it. This avoids duplicate rendering code.
             */
-            body.compact-view .grid {
-                gap: 0;
-                justify-content: center;
-            }
+        body.compact-view .grid {
+            gap: 0;
+            justify-content: center;
+        }
 
-            /*
+        /*
               Each card wraps the analog clock and edit-only name editor.
             */
-            .clock-card {
-                position: relative;
-                width: 290px;
-                min-height: 330px;
-                display: grid;
-                place-items: center;
-                border-radius: 30px;
-                transition:
-                    transform 0.18s ease,
-                    background 0.18s ease,
-                    outline 0.18s ease;
-            }
+        .clock-card {
+            position: relative;
+            width: 290px;
+            min-height: 330px;
+            display: grid;
+            place-items: center;
+            border-radius: 30px;
+            transition:
+                transform 0.18s ease,
+                background 0.18s ease,
+                outline 0.18s ease;
+        }
 
-            /*
+        /*
               In compact mode when not editing, remove extra bottom height
               from the card so the view feels like "just the clock."
             */
-            body.compact-view:not(.edit-mode) .clock-card {
-                min-height: 280px;
-            }
+        body.compact-view:not(.edit-mode) .clock-card {
+            min-height: 280px;
+        }
 
-            /*
+        /*
               In edit mode, cards indicate that they can be dragged.
               Dragging is only meaningful in gallery mode because compact
               mode displays one clock at a time.
             */
-            body.edit-mode.dashboard-view .clock-card {
-                cursor: grab;
-            }
+        body.edit-mode.dashboard-view .clock-card {
+            cursor: grab;
+        }
 
-            body.edit-mode.dashboard-view .clock-card:active {
-                cursor: grabbing;
-            }
+        body.edit-mode.dashboard-view .clock-card:active {
+            cursor: grabbing;
+        }
 
-            .clock-card.dragging {
-                opacity: 0.46;
-                transform: scale(0.98);
-            }
+        .clock-card.dragging {
+            opacity: 0.46;
+            transform: scale(0.98);
+        }
 
-            .clock-card.drop-cue {
-                outline: 2px dashed var(--good-drop);
-                outline-offset: 9px;
-                background: rgba(255, 255, 255, 0.055);
-            }
+        .clock-card.drop-cue {
+            outline: 2px dashed var(--good-drop);
+            outline-offset: 9px;
+            background: rgba(255, 255, 255, 0.055);
+        }
 
-            /*
+        /*
               Analog clock face.
             */
-            .clock {
-                position: relative;
-                width: 280px;
-                height: 280px;
-                border-radius: 50%;
-                background:
-                    radial-gradient(
-                        circle at 35% 25%,
-                        rgba(255, 255, 255, 0.22),
-                        transparent 23%
-                    ),
-                    radial-gradient(
-                        circle at center,
-                        #20293a 0%,
-                        #101722 58%,
-                        #05070c 100%
-                    );
-                border: 8px solid rgba(255, 255, 255, 0.08);
-                box-shadow:
-                    inset 0 0 40px rgba(255, 255, 255, 0.06),
-                    inset 0 -25px 50px rgba(0, 0, 0, 0.8),
-                    0 28px 60px rgba(0, 0, 0, 0.55);
-                overflow: visible;
-            }
+        .clock {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 35% 25%,
+                    rgba(255, 255, 255, 0.22),
+                    transparent 23%),
+                radial-gradient(circle at center,
+                    #20293a 0%,
+                    #101722 58%,
+                    #05070c 100%);
+            border: 8px solid rgba(255, 255, 255, 0.08);
+            box-shadow:
+                inset 0 0 40px rgba(255, 255, 255, 0.06),
+                inset 0 -25px 50px rgba(0, 0, 0, 0.8),
+                0 28px 60px rgba(0, 0, 0, 0.55);
+            overflow: visible;
+        }
 
-            .clock::before {
-                content: "";
-                position: absolute;
-                inset: 12px;
-                border-radius: 50%;
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                pointer-events: none;
-            }
+        .clock::before {
+            content: "";
+            position: absolute;
+            inset: 12px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            pointer-events: none;
+        }
 
-            /*
+        /*
               Tick marks stay inside the face.
               Each tick is placed at the top of the clock face and rotated
               around the center.
             */
-            .tick {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                width: 2px;
-                height: 10px;
-                margin-left: -1px;
-                margin-top: -122px;
-                transform-origin: center 122px;
-                background: rgba(255, 255, 255, 0.35);
-                z-index: 1;
-            }
+        .tick {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 2px;
+            height: 10px;
+            margin-left: -1px;
+            margin-top: -122px;
+            transform-origin: center 122px;
+            background: rgba(255, 255, 255, 0.35);
+            z-index: 1;
+        }
 
-            .tick.major {
-                width: 3px;
-                height: 16px;
-                margin-left: -1.5px;
-                margin-top: -128px;
-                transform-origin: center 128px;
-                background: rgba(255, 255, 255, 0.75);
-            }
+        .tick.major {
+            width: 3px;
+            height: 16px;
+            margin-left: -1.5px;
+            margin-top: -128px;
+            transform-origin: center 128px;
+            background: rgba(255, 255, 255, 0.75);
+        }
 
-            /*
+        /*
               Smartwatch-style complications.
               Text is inside the clock face, and the hands sweep over it.
             */
-            .complication {
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 78%;
-                text-align: center;
-                z-index: 2;
-                pointer-events: none;
-            }
+        .complication {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 78%;
+            text-align: center;
+            z-index: 2;
+            pointer-events: none;
+        }
 
-            .top-info {
-                top: 52px;
-            }
+        .top-info {
+            top: 52px;
+        }
 
-            .bottom-info {
-                bottom: 48px;
-            }
+        .bottom-info {
+            bottom: 48px;
+        }
 
-            .city {
-                font-size: 1.25rem;
-                font-weight: 900;
-                letter-spacing: 0.04em;
-                text-transform: uppercase;
-                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
+        .city {
+            font-size: 1.25rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-            .offset {
-                display: inline-block;
-                margin-top: 8px;
-                padding: 5px 12px;
-                border-radius: 999px;
-                font-size: 0.78rem;
-                font-weight: 800;
-                color: #dbe8ff;
-                background: rgba(255, 255, 255, 0.12);
-                border: 1px solid rgba(255, 255, 255, 0.16);
-            }
+        .offset {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #dbe8ff;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
 
-            .digital {
-                font-variant-numeric: tabular-nums;
-                font-size: 1.85rem;
-                font-weight: 900;
-                letter-spacing: 0.06em;
-            }
+        .digital {
+            font-variant-numeric: tabular-nums;
+            font-size: 1.85rem;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+        }
 
-            .date {
-                margin-top: 6px;
-                color: var(--muted-2);
-                font-size: 0.95rem;
-                font-weight: 700;
-            }
+        .date {
+            margin-top: 6px;
+            color: var(--muted-2);
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
 
-            /*
+        /*
               Analog hands.
               These intentionally sit above text complications.
             */
-            .hand {
-                position: absolute;
-                left: 50%;
-                bottom: 50%;
-                transform-origin: bottom center;
-                border-radius: 999px;
-                z-index: 5;
-                filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.75));
-            }
+        .hand {
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform-origin: bottom center;
+            border-radius: 999px;
+            z-index: 5;
+            filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.75));
+        }
 
-            .hour {
-                width: 8px;
-                height: 68px;
-                margin-left: -4px;
-                background: #f7f9ff;
-            }
+        .hour {
+            width: 8px;
+            height: 68px;
+            margin-left: -4px;
+            background: #f7f9ff;
+        }
 
-            .minute {
-                width: 5px;
-                height: 94px;
-                margin-left: -2.5px;
-                background: #dfe8ff;
-            }
+        .minute {
+            width: 5px;
+            height: 94px;
+            margin-left: -2.5px;
+            background: #dfe8ff;
+        }
 
-            .second {
-                width: 2px;
-                height: 104px;
-                margin-left: -1px;
-                background: var(--accent);
-                z-index: 6;
-            }
+        .second {
+            width: 2px;
+            height: 104px;
+            margin-left: -1px;
+            background: var(--accent);
+            z-index: 6;
+        }
 
-            .center-dot {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                width: 17px;
-                height: 17px;
-                border-radius: 50%;
-                transform: translate(-50%, -50%);
-                background: var(--accent);
-                border: 3px solid #fff;
-                z-index: 7;
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.65);
-            }
+        .center-dot {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--accent);
+            border: 3px solid #fff;
+            z-index: 7;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.65);
+        }
 
-            /*
+        /*
               Delete button:
               - Hidden by default.
               - Visible only in edit mode.
               - Local Time remains locked and cannot be deleted.
             */
-            .delete {
-                position: absolute;
-                top: 14px;
-                right: 12px;
-                width: 38px;
-                height: 38px;
-                display: none;
-                place-items: center;
-                padding: 0;
-                border: 0;
-                border-radius: 999px;
-                color: white;
-                cursor: pointer;
-                z-index: 10;
-                font-size: 1.3rem;
-                line-height: 1;
-                background: var(--accent);
-                box-shadow: 0 12px 28px rgba(255, 48, 69, 0.35);
-            }
+        .delete {
+            position: absolute;
+            top: 14px;
+            right: 12px;
+            width: 38px;
+            height: 38px;
+            display: none;
+            place-items: center;
+            padding: 0;
+            border: 0;
+            border-radius: 999px;
+            color: white;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.3rem;
+            line-height: 1;
+            background: var(--accent);
+            box-shadow: 0 12px 28px rgba(255, 48, 69, 0.35);
+        }
 
-            body.edit-mode .delete {
-                display: grid;
-            }
+        body.edit-mode .delete {
+            display: grid;
+        }
 
-            body.edit-mode .clock-card.local .delete {
-                display: none;
-            }
+        body.edit-mode .clock-card.local .delete {
+            display: none;
+        }
 
-            /*
+        /*
               Name editor under each clock.
               Visible only in edit mode.
             */
-            .name-editor {
-                display: none;
-                width: 92%;
-                margin-top: 16px;
-                gap: 7px;
-            }
+        .name-editor {
+            display: none;
+            width: 92%;
+            margin-top: 16px;
+            gap: 7px;
+        }
 
-            body.edit-mode .name-editor {
-                display: grid;
-            }
+        body.edit-mode .name-editor {
+            display: grid;
+        }
 
-            .name-editor label {
-                color: var(--muted);
-                font-size: 0.78rem;
-                font-weight: 800;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-            }
+        .name-editor label {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
 
-            .name-editor input {
-                width: 100%;
-                border: 1px solid var(--border);
-                border-radius: 999px;
-                padding: 11px 14px;
-                color: white;
-                background: rgba(255, 255, 255, 0.08);
-                outline: none;
-                font-weight: 750;
-            }
+        .name-editor input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 11px 14px;
+            color: white;
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+            font-weight: 750;
+        }
 
-            .name-editor input:focus {
-                border-color: rgba(255, 255, 255, 0.42);
-                box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
-            }
+        .name-editor input:focus {
+            border-color: rgba(255, 255, 255, 0.42);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+        }
 
-            /*
+
+        /*
               Active native select styling.
               The open dropdown menu itself is controlled by the browser/OS,
               but the closed control, focus ring, hover state, and option colors
               are styleable in most modern browsers.
             */
-            select {
-                appearance: none;
-                background:
-                    linear-gradient(
-                        135deg,
-                        rgba(255, 255, 255, 0.1),
-                        rgba(255, 255, 255, 0.04)
-                    ),
-                    rgba(255, 255, 255, 0.09);
-                color: var(--text);
-            }
+        select {
+            appearance: none;
+            background:
+                linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.1),
+                    rgba(255, 255, 255, 0.04)),
+                rgba(255, 255, 255, 0.09);
+            color: var(--text);
+        }
 
-            select:hover,
-            select:focus {
-                border-color: rgba(255, 255, 255, 0.42);
-                box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
-            }
+        select:hover,
+        select:focus {
+            border-color: rgba(255, 255, 255, 0.42);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+        }
 
-            select option {
-                color: #f5f7fb;
-                background: #101722;
-            }
+        select option {
+            color: #f5f7fb;
+            background: #101722;
+        }
 
-            /*
+        /*
               Clickable clock polish.
               In normal viewing mode, a clock can be clicked to show details.
               While editing, clicking is reserved for drag, delete, and rename.
             */
-            body:not(.edit-mode) .clock-card {
-                cursor: pointer;
-            }
+        body:not(.edit-mode) .clock-card {
+            cursor: pointer;
+        }
 
-            body:not(.edit-mode) .clock-card:hover .clock {
-                transform: translateY(-2px) scale(1.01);
-            }
+        body:not(.edit-mode) .clock-card:hover .clock {
+            transform: translateY(-2px) scale(1.01);
+        }
 
-            .clock {
-                transition:
-                    transform 220ms ease,
-                    box-shadow 220ms ease;
-            }
+        .clock {
+            transition:
+                transform 220ms ease,
+                box-shadow 220ms ease;
+        }
 
-            /*
+        /*
               Subtle reveal animations for controls and panels.
             */
-            body.edit-mode .edit-panel,
-            body.compact-view.edit-mode .compact-topbar,
-            body.dashboard-view.edit-mode .gallery-edit-panel {
-                animation: softReveal 220ms ease both;
+        body.edit-mode .edit-panel,
+        body.compact-view.edit-mode .compact-topbar,
+        body.dashboard-view.edit-mode .gallery-edit-panel {
+            animation: softReveal 220ms ease both;
+        }
+
+        @keyframes softReveal {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
             }
 
-            @keyframes softReveal {
-                from {
-                    opacity: 0;
-                    transform: translateY(-6px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
+        }
 
-            /*
+        /*
               Clock detail modal.
             */
-            .detail-overlay {
-                position: fixed;
-                inset: 0;
-                display: none;
-                place-items: center;
-                padding: 24px;
-                background: rgba(0, 0, 0, 0.58);
-                backdrop-filter: blur(10px);
-                z-index: 50;
+        .detail-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            place-items: center;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.58);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+        }
+
+        .detail-overlay.open {
+            display: grid;
+            animation: modalFade 180ms ease both;
+        }
+
+        @keyframes modalFade {
+            from {
+                opacity: 0;
             }
 
-            .detail-overlay.open {
-                display: grid;
-                animation: modalFade 180ms ease both;
+            to {
+                opacity: 1;
             }
+        }
 
-            @keyframes modalFade {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
+        .detail-modal {
+            position: relative;
+            width: min(430px, 94vw);
+            padding: 28px;
+            border-radius: 30px;
+            background:
+                radial-gradient(circle at top left,
+                    rgba(255, 255, 255, 0.14),
+                    transparent 34%),
+                #101722;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 28px 90px rgba(0, 0, 0, 0.58);
+            text-align: center;
+        }
 
-            .detail-modal {
-                position: relative;
-                width: min(430px, 94vw);
-                padding: 28px;
-                border-radius: 30px;
-                background:
-                    radial-gradient(
-                        circle at top left,
-                        rgba(255, 255, 255, 0.14),
-                        transparent 34%
-                    ),
-                    #101722;
-                border: 1px solid rgba(255, 255, 255, 0.16);
-                box-shadow: 0 28px 90px rgba(0, 0, 0, 0.58);
-                text-align: center;
-            }
+        .detail-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 34px;
+            min-height: 34px;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+            color: var(--text);
+            font-size: 1.25rem;
+        }
 
-            .detail-close {
-                position: absolute;
-                top: 14px;
-                right: 14px;
-                width: 34px;
-                min-height: 34px;
-                padding: 0;
-                display: grid;
-                place-items: center;
-                background: rgba(255, 255, 255, 0.1);
-                box-shadow: none;
-                color: var(--text);
-                font-size: 1.25rem;
-            }
+        .detail-modal h2 {
+            margin: 8px 0 4px;
+            font-size: 1.7rem;
+            letter-spacing: -0.03em;
+        }
 
-            .detail-modal h2 {
-                margin: 8px 0 4px;
-                font-size: 1.7rem;
-                letter-spacing: -0.03em;
-            }
+        .detail-zone {
+            color: var(--muted);
+            font-size: 0.92rem;
+            word-break: break-word;
+        }
 
-            .detail-zone {
-                color: var(--muted);
-                font-size: 0.92rem;
-                word-break: break-word;
-            }
+        .detail-time {
+            margin-top: 22px;
+            font-variant-numeric: tabular-nums;
+            font-size: 2.45rem;
+            font-weight: 950;
+            letter-spacing: 0.04em;
+        }
 
-            .detail-time {
-                margin-top: 22px;
-                font-variant-numeric: tabular-nums;
-                font-size: 2.45rem;
-                font-weight: 950;
-                letter-spacing: 0.04em;
-            }
+        .detail-date {
+            margin-top: 4px;
+            color: var(--muted-2);
+            font-weight: 800;
+        }
 
-            .detail-date {
-                margin-top: 4px;
-                color: var(--muted-2);
-                font-weight: 800;
-            }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 22px;
+        }
 
-            .detail-grid {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 12px;
-                margin-top: 22px;
-            }
+        .detail-grid div {
+            padding: 14px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.11);
+        }
 
-            .detail-grid div {
-                padding: 14px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.08);
-                border: 1px solid rgba(255, 255, 255, 0.11);
-            }
+        .detail-grid span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.74rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
 
-            .detail-grid span {
-                display: block;
-                color: var(--muted);
-                font-size: 0.74rem;
-                font-weight: 900;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-            }
+        .detail-grid strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 1rem;
+        }
 
-            .detail-grid strong {
-                display: block;
-                margin-top: 5px;
-                font-size: 1rem;
-            }
+        .detail-note {
+            margin: 20px 0 0;
+            color: var(--muted);
+            font-size: 0.86rem;
+            line-height: 1.45;
+        }
 
-            .detail-note {
-                margin: 20px 0 0;
-                color: var(--muted);
-                font-size: 0.86rem;
-                line-height: 1.45;
-            }
-
-            /*
+        /*
               Edit panel:
               - Hidden by default.
               - Visible in edit mode.
@@ -811,24 +821,24 @@
               In compact mode, this still appears below the clock/control area
               once the user opens Edit.
             */
-            .edit-panel {
-                display: none;
-                max-width: 820px;
-                margin: 16px auto 42px;
-                padding: 0 20px 20px 20px;
-                border-radius: 28px;
-                background: rgba(255, 255, 255, 0.075);
-                border: 1px solid rgba(255, 255, 255, 0.14);
-                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
-                backdrop-filter: blur(14px);
-            }
+        .edit-panel {
+            display: none;
+            max-width: 820px;
+            margin: 16px auto 42px;
+            padding: 0 20px 20px 20px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.075);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+            backdrop-filter: blur(14px);
+        }
 
-            body.edit-mode .edit-panel {
-                display: block;
-            }
+        body.edit-mode .edit-panel {
+            display: block;
+        }
 
-            .edit-label {
-                /*margin: 0 0 18px;
+        .edit-label {
+            /*margin: 0 0 18px;
                 padding: 13px 15px;
                 border-radius: 18px;
                 color: #dbe8ff;
@@ -836,195 +846,174 @@
                 border: 1px solid rgba(255, 255, 255, 0.12);
                 font-weight: 800;
                 text-align: center;*/
-                color: var(--muted);
-                font-size: 0.76rem;
-                font-weight: 900;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-            }
+            color: var(--muted);
+            font-size: 0.76rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
 
-            .controls {
-                display: flex;
-                flex-direction: column;
-                gap: 14px;
-                justify-content: center;
-                max-width: 720px;
-                margin: 0 auto;
-            }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            justify-content: center;
+            max-width: 720px;
+            margin: 0 auto;
+        }
 
-            .controls input {
-                flex: 1;
-                min-width: 220px;
-                border: 1px solid var(--border);
-                border-radius: 999px;
-                padding: 15px 20px;
-                font-size: 1rem;
-                color: #fff;
-                background: rgba(255, 255, 255, 0.08);
-                outline: none;
-                backdrop-filter: blur(14px);
-            }
+        .controls input {
+            flex: 1;
+            min-width: 220px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+            backdrop-filter: blur(14px);
+        }
 
-            .controls input:focus {
-                border-color: rgba(255, 255, 255, 0.42);
-                box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
-            }
+        .controls input:focus {
+            border-color: rgba(255, 255, 255, 0.42);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+        }
 
-            /*
+        /*
               Timezone preview card.
               Appears only after a valid, non-duplicate timezone is selected.
             */
+        .preview-card {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 18px;
+            align-items: center;
+            padding: 18px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.09);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(14px);
+        }
+
+        .preview-card.hidden {
+            display: none;
+        }
+
+        .preview-name {
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        .preview-zone {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .preview-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .preview-meta span {
+            color: #dbe8ff;
+            font-weight: 800;
+        }
+
+        .preview-meta strong {
+            font-size: 1.2rem;
+        }
+
+        .preview-card button {
+            height: 48px;
+        }
+
+        @media (max-width: 720px) {
+            .compact-field-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 620px) {
             .preview-card {
-                display: grid;
-                grid-template-columns: 1fr auto auto;
-                gap: 18px;
-                align-items: center;
-                padding: 18px;
-                border-radius: 24px;
-                background: rgba(255, 255, 255, 0.09);
-                border: 1px solid rgba(255, 255, 255, 0.14);
-                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
-                backdrop-filter: blur(14px);
-            }
-
-            .preview-card.hidden {
-                display: none;
-            }
-
-            .preview-name {
-                font-size: 1.25rem;
-                font-weight: 900;
-            }
-
-            .preview-zone {
-                margin-top: 3px;
-                color: var(--muted);
-                font-size: 0.92rem;
+                grid-template-columns: 1fr;
+                text-align: center;
             }
 
             .preview-meta {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-                text-align: right;
-                font-variant-numeric: tabular-nums;
+                text-align: center;
             }
+        }
+    </style>
+</head>
 
-            .preview-meta span {
-                color: #dbe8ff;
-                font-weight: 800;
-            }
+<body>
+    <main class="app">
+        <header>
+            <h1>World Clock Gallery</h1>
+            <div class="subtitle">
+                Native Intl-powered timezone clocks with live UTC offsets
+            </div>
+        </header>
 
-            .preview-meta strong {
-                font-size: 1.2rem;
-            }
-
-            .preview-card button {
-                height: 48px;
-            }
-
-            @media (max-width: 720px) {
-                .compact-field-grid {
-                    grid-template-columns: 1fr;
-                }
-            }
-
-            @media (max-width: 620px) {
-                .preview-card {
-                    grid-template-columns: 1fr;
-                    text-align: center;
-                }
-
-                .preview-meta {
-                    text-align: center;
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-        <main class="app">
-            <header>
-                <h1>World Clock Gallery</h1>
-                <div class="subtitle">
-                    Native Intl-powered timezone clocks with live UTC offsets
-                </div>
-            </header>
-
-            <section class="stage" aria-label="Timezone gallery">
-                <!--
+        <section class="stage" aria-label="Timezone gallery">
+            <!--
                   Compact edit controls.
                   These are hidden until compact mode is active AND the user
                   clicks the subtle Edit link.
                 -->
-                <section
-                    id="compactTopbar"
-                    class="compact-topbar"
-                    aria-label="Compact clock controls"
-                >
-                    <div class="compact-field-grid">
-                        <div class="field">
-                            <label for="compactClockSelect"
-                                >Display Clock</label
-                            >
-                            <select id="compactClockSelect"></select>
-                        </div>
-
-                        <div class="field">
-                            <label for="viewModeSelect">View</label>
-                            <select id="viewModeSelect">
-                                <option value="compact">Compact</option>
-                                <option value="dashboard">Gallery</option>
-                            </select>
-                        </div>
-
-                        <button id="compactDoneBtn" type="button">Done</button>
+            <section id="compactTopbar" class="compact-topbar" aria-label="Compact clock controls">
+                <div class="compact-field-grid">
+                    <div class="field">
+                        <label for="compactClockSelect">Display Clock</label>
+                        <select id="compactClockSelect"></select>
                     </div>
-                </section>
 
-                <!-- Clock grid is rendered by JavaScript. -->
-                <section
-                    id="grid"
-                    class="grid"
-                    aria-label="Timezone clocks"
-                ></section>
+                    <div class="field">
+                        <label for="viewModeSelect">View</label>
+                        <select id="viewModeSelect">
+                            <option value="compact">Compact</option>
+                            <option value="dashboard">Gallery</option>
+                        </select>
+                    </div>
 
-                <!--
+                    <button id="compactSaveBtn" type="button">Save</button>
+                </div>
+            </section>
+
+            <!-- Clock grid is rendered by JavaScript. -->
+            <section id="grid" class="grid" aria-label="Timezone clocks"></section>
+
+            <!--
                   In compact mode, this is the only visible control until clicked.
-                  In gallery mode, this is hidden and the larger Edit button is used.
+                  In gallery mode, this is hidden because Gallery uses its own Configure link.
                 -->
-                <button
-                    id="compactEditLink"
-                    class="subtle-edit-link"
-                    type="button"
-                >
-                    Configure
-                </button>
+            <button id="compactEditLink" class="subtle-edit-link" type="button">
+                Configure
+            </button>
 
-                <!--
-                  Gallery-mode Configure / Done link.
+            <!--
+                  Gallery-mode Configure / Save link.
                   This is subtle, like the compact Edit link.
                 -->
-                <div class="edit-toggle-row">
-                    <button
-                        id="editToggle"
-                        class="subtle-edit-link edit-toggle"
-                        type="button"
-                    >
-                        Configure
-                    </button>
-                </div>
+            <div class="edit-toggle-row">
+                <button id="editToggle" class="subtle-edit-link edit-toggle" type="button">
+                    Configure
+                </button>
+            </div>
 
-                <!--
+            <!--
                   Gallery edit controls.
                   This appears only while editing in gallery view and gives
                   the user a clear way to switch back to Compact mode.
                 -->
-                <section
-                    id="dashboardEditPanel"
-                    class="gallery-edit-panel"
-                    aria-label="Gallery view controls"
-                >
+            <section id="dashboardEditPanel" class="gallery-edit-panel" aria-label="Gallery view controls">
+                <div class="gallery-config-grid">
                     <div class="field">
                         <label for="dashboardViewModeSelect">View</label>
                         <select id="dashboardViewModeSelect">
@@ -1032,598 +1021,594 @@
                             <option value="compact">Compact</option>
                         </select>
                     </div>
-                </section>
 
-                <!--
+                    <button id="gallerySaveBtn" type="button">Save</button>
+                </div>
+            </section>
+
+            <!--
                   Clock modification area.
                   Hidden by default. Revealed when edit mode is active.
                 -->
-                <section
-                    id="editPanel"
-                    class="edit-panel"
-                    aria-label="Gallery editing tools"
-                >
-                    <p class="edit-label">
-                        Search for a timezone to add a clock.
-                    </p>
+            <section id="editPanel" class="edit-panel" aria-label="Gallery editing tools">
+                <p class="edit-label">
+                    Search for a timezone to add a clock.
+                </p>
 
-                    <section class="controls" aria-label="Add timezone clock">
-                        <input
-                            id="tzInput"
-                            list="timezoneList"
-                            placeholder="Search timezone, e.g. America/New_York"
-                            autocomplete="off"
-                        />
-                        <datalist id="timezoneList"></datalist>
+                <section class="controls" aria-label="Add timezone clock">
+                    <input id="tzInput" list="timezoneList" placeholder="Search timezone, e.g. America/New_York"
+                        autocomplete="off" />
+                    <datalist id="timezoneList"></datalist>
 
-                        <div id="previewCard" class="preview-card hidden">
-                            <div>
-                                <div
-                                    class="preview-name"
-                                    data-preview-name
-                                ></div>
-                                <div
-                                    class="preview-zone"
-                                    data-preview-zone
-                                ></div>
-                            </div>
-
-                            <div class="preview-meta">
-                                <span data-preview-offset></span>
-                                <strong data-preview-time></strong>
-                            </div>
-
-                            <button id="addBtn" type="button">Add Clock</button>
+                    <div id="previewCard" class="preview-card hidden">
+                        <div>
+                            <div class="preview-name" data-preview-name></div>
+                            <div class="preview-zone" data-preview-zone></div>
                         </div>
-                    </section>
-                </section>
 
-                <!--
+                        <div class="preview-meta">
+                            <span data-preview-offset></span>
+                            <strong data-preview-time></strong>
+                        </div>
+
+                        <button id="addBtn" type="button">Add Clock</button>
+                    </div>
+                </section>
+            </section>
+
+
+            <!--
                   Clock detail modal.
                   Clicking a clock in normal view opens this lightweight detail panel.
                 -->
-                <div
-                    id="detailOverlay"
-                    class="detail-overlay"
-                    aria-hidden="true"
-                >
-                    <section
-                        class="detail-modal"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="detailTitle"
-                    >
-                        <button
-                            id="detailClose"
-                            class="detail-close"
-                            type="button"
-                            aria-label="Close details"
-                        >
-                            ×
-                        </button>
-                        <h2 id="detailTitle" data-detail-title></h2>
-                        <div class="detail-zone" data-detail-zone></div>
-                        <div class="detail-time" data-detail-time></div>
-                        <div class="detail-date" data-detail-date></div>
-                        <div class="detail-grid">
-                            <div>
-                                <span>UTC Offset</span>
-                                <strong data-detail-offset></strong>
-                            </div>
+            <div id="detailOverlay" class="detail-overlay" aria-hidden="true">
+                <section class="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+                    <button id="detailClose" class="detail-close" type="button" aria-label="Close details">×</button>
+                    <h2 id="detailTitle" data-detail-title></h2>
+                    <div class="detail-zone" data-detail-zone></div>
+                    <div class="detail-time" data-detail-time></div>
+                    <div class="detail-date" data-detail-date></div>
+                    <div class="detail-grid">
+                        <div>
+                            <span>UTC Offset</span>
+                            <strong data-detail-offset></strong>
                         </div>
-                        <p class="detail-note">
-                            Clock details are calculated live using the
-                            browser’s native timezone engine.
-                        </p>
-                    </section>
-                </div>
-            </section>
-        </main>
+                    </div>
+                    <p class="detail-note">
+                        Clock details are calculated live using the browser’s native timezone engine.
+                    </p>
+                </section>
+            </div>
+        </section>
+    </main>
 
-        <script>
-            (() => {
-                /*
-                  ============================================================
-                  State and DOM references
-                  ============================================================
-                */
+    <script>
+        (() => {
+            /*
+              ============================================================
+              State and DOM references
+              ============================================================
+            */
 
-                const grid = document.getElementById("grid");
-                const input = document.getElementById("tzInput");
-                const datalist = document.getElementById("timezoneList");
-                const addBtn = document.getElementById("addBtn");
+            const grid = document.getElementById("grid");
+            const input = document.getElementById("tzInput");
+            const datalist = document.getElementById("timezoneList");
+            const addBtn = document.getElementById("addBtn");
 
-                const editToggle = document.getElementById("editToggle");
-                const compactEditLink =
-                    document.getElementById("compactEditLink");
-                const compactDoneBtn =
-                    document.getElementById("compactDoneBtn");
-                const compactClockSelect =
-                    document.getElementById("compactClockSelect");
-                const viewModeSelect =
-                    document.getElementById("viewModeSelect");
-                const dashboardViewModeSelect = document.getElementById(
-                    "dashboardViewModeSelect",
-                );
+            const editToggle = document.getElementById("editToggle");
+            const compactEditLink =
+                document.getElementById("compactEditLink");
+            const compactSaveBtn =
+                document.getElementById("compactSaveBtn");
+            const compactClockSelect =
+                document.getElementById("compactClockSelect");
+            const viewModeSelect =
+                document.getElementById("viewModeSelect");
+            const dashboardViewModeSelect = document.getElementById(
+                "dashboardViewModeSelect",
+            );
+            const gallerySaveBtn = document.getElementById("gallerySaveBtn");
 
-                const previewCard = document.getElementById("previewCard");
-                const previewName = document.querySelector(
-                    "[data-preview-name]",
-                );
-                const previewZone = document.querySelector(
-                    "[data-preview-zone]",
-                );
-                const previewOffset = document.querySelector(
-                    "[data-preview-offset]",
-                );
-                const previewTime = document.querySelector(
-                    "[data-preview-time]",
-                );
+            const previewCard = document.getElementById("previewCard");
+            const previewName = document.querySelector(
+                "[data-preview-name]",
+            );
+            const previewZone = document.querySelector(
+                "[data-preview-zone]",
+            );
+            const previewOffset = document.querySelector(
+                "[data-preview-offset]",
+            );
+            const previewTime = document.querySelector(
+                "[data-preview-time]",
+            );
 
-                const detailOverlay = document.getElementById("detailOverlay");
-                const detailClose = document.getElementById("detailClose");
-                const detailTitle = document.querySelector(
-                    "[data-detail-title]",
-                );
-                const detailZone = document.querySelector("[data-detail-zone]");
-                const detailTime = document.querySelector("[data-detail-time]");
-                const detailDate = document.querySelector("[data-detail-date]");
-                const detailOffset = document.querySelector(
-                    "[data-detail-offset]",
-                );
+            const detailOverlay = document.getElementById("detailOverlay");
+            const detailClose = document.getElementById("detailClose");
+            const detailTitle = document.querySelector("[data-detail-title]");
+            const detailZone = document.querySelector("[data-detail-zone]");
+            const detailTime = document.querySelector("[data-detail-time]");
+            const detailDate = document.querySelector("[data-detail-date]");
+            const detailOffset = document.querySelector("[data-detail-offset]");
 
-                /*
-                  Versioned localStorage keys.
-                  Keeping these versioned gives you a clean migration path later.
-                */
-                const STORAGE_KEY = "timezoneGallery.clocks.v1";
-                const MODE_KEY = "timezoneGallery.viewMode.v1";
-                const COMPACT_SELECTED_KEY =
-                    "timezoneGallery.compactSelectedClockId.v1";
+            /*
+              Versioned localStorage keys.
+              Keeping these versioned gives you a clean migration path later.
+            */
+            const STORAGE_KEY = "timezoneGallery.clocks.v1";
+            const MODE_KEY = "timezoneGallery.viewMode.v1";
+            const COMPACT_SELECTED_KEY =
+                "timezoneGallery.compactSelectedClockId.v1";
 
-                /*
-                  Browser-native timezone list.
-                  Intl.supportedValuesOf("timeZone") returns the official IANA
-                  timezone names supported by the browser.
-                */
-                const supportedTimezones =
-                    typeof Intl.supportedValuesOf === "function"
-                        ? Intl.supportedValuesOf("timeZone")
-                        : [
-                              "America/New_York",
-                              "Europe/London",
-                              "Asia/Tokyo",
-                              "Asia/Kolkata",
-                              "Australia/Sydney",
-                          ];
+            /*
+              Browser-native timezone list.
+              Intl.supportedValuesOf("timeZone") returns the official IANA
+              timezone names supported by the browser.
+            */
+            const supportedTimezones =
+                typeof Intl.supportedValuesOf === "function"
+                    ? Intl.supportedValuesOf("timeZone")
+                    : [
+                        "America/New_York",
+                        "Europe/London",
+                        "Asia/Tokyo",
+                        "Asia/Kolkata",
+                        "Australia/Sydney",
+                    ];
 
-                /*
-                  Load clocks first. View state depends on the available clocks,
-                  so compactClockId must not be initialized before clocks exists.
-                */
-                let clocks = loadClocks() || defaultClocks();
+            /*
+              Load clocks first. View state depends on the available clocks,
+              so compactClockId must not be initialized before clocks exists.
+            */
+            let clocks = loadClocks() || defaultClocks();
 
-                /*
-                  View state:
-                  - gallery = show all clocks
-                  - compact = show one selected clock
-                  Compact is the intended "everyday" default.
-                */
-                let viewMode = loadViewMode();
-                let compactClockId = loadCompactClockId() || clocks[0]?.id;
+            /*
+              View state:
+              - gallery = show all clocks
+              - compact = show one selected clock
+              Compact is the intended "everyday" default.
+            */
+            let viewMode = loadViewMode();
+            let compactClockId = loadCompactClockId() || clocks[0]?.id;
 
-                /*
-                  Editing state is separate from view mode.
-                  This keeps the UI behavior easy to reason about:
-                  - Compact + not editing = only the clock face + subtle Edit link
-                  - Compact + editing = clock + compact controls + edit panel
-                  - Gallery + not editing = grid + gallery Edit button
-                  - Gallery + editing = grid + edit panel
-                */
-                let isEditMode = false;
+            /*
+              Editing state is separate from view mode.
+              This keeps the UI behavior easy to reason about:
+              - Compact + not editing = only the clock face + subtle Edit link
+              - Compact + editing = clock + compact controls + edit panel
+              - Gallery + not editing = grid + subtle Configure link
+              - Gallery + editing = grid + controls + edit panel
+            */
+            let isEditMode = false;
 
-                /*
-                  Search/add state and drag/drop state.
-                */
-                let selectedZone = "";
-                let draggedClockId = null;
+            /*
+              Search/add state and drag/drop state.
+            */
+            let selectedZone = "";
+            let draggedClockId = null;
 
-                // Tracks which clock is currently open in the detail modal.
-                let activeDetailClockId = null;
+            // Tracks which clock is currently open in the detail modal.
+            let activeDetailClockId = null;
 
-                /*
-                  Make sure compactClockId is valid before first render.
-                */
-                ensureCompactClockExists();
+            /*
+              Make sure compactClockId is valid before first render.
+            */
+            ensureCompactClockExists();
 
-                /*
-                  ============================================================
-                  Persistence helpers
-                  ============================================================
-                */
+            /*
+              ============================================================
+              Persistence helpers
+              ============================================================
+            */
 
-                function saveClocks() {
-                    try {
-                        localStorage.setItem(
-                            STORAGE_KEY,
-                            JSON.stringify(clocks),
-                        );
-                    } catch (error) {
-                        console.warn(
-                            "Unable to save timezone gallery clocks:",
-                            error,
-                        );
-                    }
+            function saveClocks() {
+                try {
+                    localStorage.setItem(
+                        STORAGE_KEY,
+                        JSON.stringify(clocks),
+                    );
+                } catch (error) {
+                    console.warn(
+                        "Unable to save timezone gallery clocks:",
+                        error,
+                    );
                 }
+            }
 
-                function loadClocks() {
-                    try {
-                        const saved = localStorage.getItem(STORAGE_KEY);
-                        if (!saved) return null;
+            function loadClocks() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    if (!saved) return null;
 
-                        const parsed = JSON.parse(saved);
-                        if (!Array.isArray(parsed)) return null;
+                    const parsed = JSON.parse(saved);
+                    if (!Array.isArray(parsed)) return null;
 
-                        const cleaned = parsed
-                            .filter(
-                                (clock) => clock && typeof clock === "object",
-                            )
-                            .map((clock) => ({
-                                id:
-                                    typeof clock.id === "string"
-                                        ? clock.id
-                                        : makeId(),
-                                zone:
-                                    clock.zone === null ||
+                    const cleaned = parsed
+                        .filter(
+                            (clock) => clock && typeof clock === "object",
+                        )
+                        .map((clock) => ({
+                            id:
+                                typeof clock.id === "string"
+                                    ? clock.id
+                                    : makeId(),
+                            zone:
+                                clock.zone === null ||
                                     supportedTimezones.includes(clock.zone)
-                                        ? clock.zone
-                                        : null,
-                                label:
-                                    typeof clock.label === "string" &&
+                                    ? clock.zone
+                                    : null,
+                            label:
+                                typeof clock.label === "string" &&
                                     clock.label.trim()
-                                        ? clock.label.trim()
-                                        : friendlyName(clock.zone),
-                                locked: Boolean(clock.locked),
-                            }));
+                                    ? clock.label.trim()
+                                    : friendlyName(clock.zone),
+                            locked: Boolean(clock.locked),
+                        }));
 
-                        /*
-                          Guarantee one locked Local Time clock.
-                        */
-                        const hasLockedLocal = cleaned.some(
-                            (clock) => clock.zone === null && clock.locked,
-                        );
+                    /*
+                      Guarantee one locked Local Time clock.
+                    */
+                    const hasLockedLocal = cleaned.some(
+                        (clock) => clock.zone === null && clock.locked,
+                    );
 
-                        if (!hasLockedLocal) {
-                            cleaned.unshift({
-                                id: makeId(),
-                                zone: null,
-                                label: "Local Time",
-                                locked: true,
-                            });
-                        }
-
-                        return cleaned.length ? cleaned : null;
-                    } catch (error) {
-                        console.warn(
-                            "Unable to load timezone gallery clocks:",
-                            error,
-                        );
-                        return null;
-                    }
-                }
-
-                function saveViewSettings() {
-                    try {
-                        localStorage.setItem(MODE_KEY, viewMode);
-
-                        if (compactClockId) {
-                            localStorage.setItem(
-                                COMPACT_SELECTED_KEY,
-                                compactClockId,
-                            );
-                        }
-                    } catch (error) {
-                        console.warn(
-                            "Unable to save timezone gallery view settings:",
-                            error,
-                        );
-                    }
-                }
-
-                function loadViewMode() {
-                    try {
-                        return localStorage.getItem(MODE_KEY) === "dashboard"
-                            ? "gallery"
-                            : "compact";
-                    } catch {
-                        return "compact";
-                    }
-                }
-
-                function loadCompactClockId() {
-                    try {
-                        return localStorage.getItem(COMPACT_SELECTED_KEY);
-                    } catch {
-                        return null;
-                    }
-                }
-
-                /*
-                  ============================================================
-                  Setup helpers
-                  ============================================================
-                */
-
-                function defaultClocks() {
-                    return [
-                        {
+                    if (!hasLockedLocal) {
+                        cleaned.unshift({
                             id: makeId(),
                             zone: null,
                             label: "Local Time",
                             locked: true,
-                        },
-                        {
-                            id: makeId(),
-                            zone: "America/New_York",
-                            label: "New York",
-                        },
-                        {
-                            id: makeId(),
-                            zone: "Europe/London",
-                            label: "London",
-                        },
-                        {
-                            id: makeId(),
-                            zone: "Asia/Tokyo",
-                            label: "Tokyo",
-                        },
-                    ];
-                }
-
-                function makeId() {
-                    if (
-                        window.crypto &&
-                        typeof window.crypto.randomUUID === "function"
-                    ) {
-                        return window.crypto.randomUUID();
+                        });
                     }
 
-                    return `clock-${Date.now()}-${Math.random()
-                        .toString(16)
-                        .slice(2)}`;
-                }
-
-                function populateTimezoneList() {
-                    supportedTimezones.forEach((zone) => {
-                        const option = document.createElement("option");
-                        option.value = zone;
-                        datalist.appendChild(option);
-                    });
-                }
-
-                function friendlyName(zone) {
-                    if (!zone) return "Local Time";
-
-                    return zone
-                        .split("/")
-                        .pop()
-                        .replaceAll("_", " ")
-                        .replace(/\b\w/g, (letter) => letter.toUpperCase());
-                }
-
-                function displayLabel(clock) {
-                    return clock.label || friendlyName(clock.zone);
-                }
-
-                function escapeHtml(value) {
-                    return String(value)
-                        .replaceAll("&", "&amp;")
-                        .replaceAll("<", "&lt;")
-                        .replaceAll(">", "&gt;")
-                        .replaceAll('"', "&quot;")
-                        .replaceAll("'", "&#039;");
-                }
-
-                /*
-                  Long labels are shrunk to fit inside the clock face.
-                  This preserves the smartwatch-complication feel.
-                */
-                function fitCityText(card) {
-                    const city = card.querySelector("[data-city]");
-                    if (!city) return;
-
-                    const maxSize = 1.25;
-                    const minSize = 0.68;
-                    let size = maxSize;
-
-                    city.style.fontSize = `${maxSize}rem`;
-
-                    while (
-                        city.scrollWidth > city.clientWidth &&
-                        size > minSize
-                    ) {
-                        size -= 0.04;
-                        city.style.fontSize = `${size.toFixed(2)}rem`;
-                    }
-                }
-
-                /*
-                  ============================================================
-                  Intl timezone calculations
-                  ============================================================
-                */
-
-                function formatOffset(parts) {
-                    const raw = parts.timeZoneName || "GMT";
-                    const utc = raw.replace("GMT", "UTC");
-
-                    return utc === "UTC" ? "UTC" : utc.replace("UTC", "UTC ");
-                }
-
-                /*
-                  This function intentionally uses Intl for time calculation.
-                  No manual timezone math is done, so DST and fractional offsets
-                  are handled by the browser.
-                */
-                function numericTime(zone) {
-                    const now = new Date();
-
-                    const parts = new Intl.DateTimeFormat("en-US", {
-                        timeZone: zone || undefined,
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: false,
-                        weekday: "short",
-                        month: "short",
-                        day: "2-digit",
-                        timeZoneName: "longOffset",
-                    }).formatToParts(now);
-
-                    const mapped = Object.fromEntries(
-                        parts.map((part) => [part.type, part.value]),
+                    return cleaned.length ? cleaned : null;
+                } catch (error) {
+                    console.warn(
+                        "Unable to load timezone gallery clocks:",
+                        error,
                     );
-
-                    return {
-                        hour: Number(mapped.hour === "24" ? 0 : mapped.hour),
-                        minute: Number(mapped.minute),
-                        second: Number(mapped.second),
-                        millisecond: now.getMilliseconds(),
-                        digital: `${mapped.hour}:${mapped.minute}:${mapped.second}`,
-                        date: `${mapped.weekday}, ${mapped.month} ${mapped.day}`,
-                        offset: formatOffset(mapped),
-                    };
+                    return null;
                 }
+            }
 
-                /*
-                  ============================================================
-                  View mode helpers
-                  ============================================================
-                */
+            function saveViewSettings() {
+                try {
+                    localStorage.setItem(MODE_KEY, viewMode);
 
-                function setViewMode(nextMode) {
-                    viewMode = nextMode === "dashboard" ? "gallery" : "compact";
+                    if (compactClockId) {
+                        localStorage.setItem(
+                            COMPACT_SELECTED_KEY,
+                            compactClockId,
+                        );
+                    }
+                } catch (error) {
+                    console.warn(
+                        "Unable to save timezone gallery view settings:",
+                        error,
+                    );
+                }
+            }
+
+            function loadViewMode() {
+                try {
+                    const savedMode = localStorage.getItem(MODE_KEY);
 
                     /*
-                      When switching views, keep editing open only if the user is
-                      intentionally navigating through edit controls. This feels
-                      less surprising than closing controls immediately.
+                      Earlier versions briefly saved "gallery" as the internal
+                      value. Normalize both "gallery" and "dashboard" to the
+                      current internal value: "dashboard".
+
+                      The UI still says "Gallery"; only the internal state uses
+                      "dashboard" so existing CSS classes and drag/drop checks
+                      continue to work.
                     */
-                    ensureCompactClockExists();
+                    return savedMode === "dashboard" || savedMode === "gallery"
+                        ? "dashboard"
+                        : "compact";
+                } catch {
+                    return "compact";
+                }
+            }
+
+            function loadCompactClockId() {
+                try {
+                    return localStorage.getItem(COMPACT_SELECTED_KEY);
+                } catch {
+                    return null;
+                }
+            }
+
+            /*
+              ============================================================
+              Setup helpers
+              ============================================================
+            */
+
+            function defaultClocks() {
+                return [
+                    {
+                        id: makeId(),
+                        zone: null,
+                        label: "Local Time",
+                        locked: true,
+                    },
+                    {
+                        id: makeId(),
+                        zone: "America/New_York",
+                        label: "New York",
+                    },
+                    {
+                        id: makeId(),
+                        zone: "Europe/London",
+                        label: "London",
+                    },
+                    {
+                        id: makeId(),
+                        zone: "Asia/Tokyo",
+                        label: "Tokyo",
+                    },
+                ];
+            }
+
+            function makeId() {
+                if (
+                    window.crypto &&
+                    typeof window.crypto.randomUUID === "function"
+                ) {
+                    return window.crypto.randomUUID();
+                }
+
+                return `clock-${Date.now()}-${Math.random()
+                    .toString(16)
+                    .slice(2)}`;
+            }
+
+            function populateTimezoneList() {
+                supportedTimezones.forEach((zone) => {
+                    const option = document.createElement("option");
+                    option.value = zone;
+                    datalist.appendChild(option);
+                });
+            }
+
+            function friendlyName(zone) {
+                if (!zone) return "Local Time";
+
+                return zone
+                    .split("/")
+                    .pop()
+                    .replaceAll("_", " ")
+                    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+            }
+
+            function displayLabel(clock) {
+                return clock.label || friendlyName(clock.zone);
+            }
+
+            function escapeHtml(value) {
+                return String(value)
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }
+
+            /*
+              Long labels are shrunk to fit inside the clock face.
+              This preserves the smartwatch-complication feel.
+            */
+            function fitCityText(card) {
+                const city = card.querySelector("[data-city]");
+                if (!city) return;
+
+                const maxSize = 1.25;
+                const minSize = 0.68;
+                let size = maxSize;
+
+                city.style.fontSize = `${maxSize}rem`;
+
+                while (
+                    city.scrollWidth > city.clientWidth &&
+                    size > minSize
+                ) {
+                    size -= 0.04;
+                    city.style.fontSize = `${size.toFixed(2)}rem`;
+                }
+            }
+
+            /*
+              ============================================================
+              Intl timezone calculations
+              ============================================================
+            */
+
+            function formatOffset(parts) {
+                const raw = parts.timeZoneName || "GMT";
+                const utc = raw.replace("GMT", "UTC");
+
+                return utc === "UTC" ? "UTC" : utc.replace("UTC", "UTC ");
+            }
+
+            /*
+              This function intentionally uses Intl for time calculation.
+              No manual timezone math is done, so DST and fractional offsets
+              are handled by the browser.
+            */
+            function numericTime(zone) {
+                const now = new Date();
+
+                const parts = new Intl.DateTimeFormat("en-US", {
+                    timeZone: zone || undefined,
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false,
+                    weekday: "short",
+                    month: "short",
+                    day: "2-digit",
+                    timeZoneName: "longOffset",
+                }).formatToParts(now);
+
+                const mapped = Object.fromEntries(
+                    parts.map((part) => [part.type, part.value]),
+                );
+
+                return {
+                    hour: Number(mapped.hour === "24" ? 0 : mapped.hour),
+                    minute: Number(mapped.minute),
+                    second: Number(mapped.second),
+                    millisecond: now.getMilliseconds(),
+                    digital: `${mapped.hour}:${mapped.minute}:${mapped.second}`,
+                    date: `${mapped.weekday}, ${mapped.month} ${mapped.day}`,
+                    offset: formatOffset(mapped),
+                };
+            }
+
+            /*
+              ============================================================
+              View mode helpers
+              ============================================================
+            */
+
+            function setViewMode(nextMode) {
+                /*
+                  Internal values are:
+                  - "compact" for the single-clock widget view
+                  - "dashboard" for the multi-clock Gallery view
+
+                  The UI labels this second mode "Gallery", but keeping the
+                  internal value as "dashboard" preserves compatibility with
+                  the existing CSS classes and drag/drop checks.
+                */
+                viewMode =
+                    nextMode === "dashboard" ? "dashboard" : "compact";
+
+                /*
+                  When switching views, keep editing open only if the user is
+                  intentionally navigating through edit controls. This feels
+                  less surprising than closing controls immediately.
+                */
+                ensureCompactClockExists();
+                saveViewSettings();
+                syncModeClasses();
+                render();
+                tick();
+            }
+
+            function ensureCompactClockExists() {
+                if (!clocks.length) {
+                    clocks = defaultClocks();
+                    saveClocks();
+                }
+
+                if (!clocks.some((clock) => clock.id === compactClockId)) {
+                    compactClockId = clocks[0]?.id || null;
                     saveViewSettings();
-                    syncModeClasses();
-                    render();
-                    tick();
                 }
+            }
 
-                function ensureCompactClockExists() {
-                    if (!clocks.length) {
-                        clocks = defaultClocks();
-                        saveClocks();
-                    }
+            function syncModeClasses() {
+                /*
+                  These body classes drive the mode-specific CSS.
+                  If viewMode does not match these class checks, controls can
+                  disappear and Gallery drag/drop will stop working.
+                */
+                document.body.classList.toggle(
+                    "compact-view",
+                    viewMode === "compact",
+                );
+                document.body.classList.toggle(
+                    "dashboard-view",
+                    viewMode === "dashboard",
+                );
+                document.body.classList.toggle("edit-mode", isEditMode);
 
-                    if (!clocks.some((clock) => clock.id === compactClockId)) {
-                        compactClockId = clocks[0]?.id || null;
-                        saveViewSettings();
-                    }
-                }
+                editToggle.textContent = isEditMode ? "Save" : "Configure";
+                compactSaveBtn.textContent = "Save";
 
-                function syncModeClasses() {
-                    document.body.classList.toggle(
-                        "compact-view",
-                        viewMode === "compact",
-                    );
-                    document.body.classList.toggle(
-                        "dashboard-view",
-                        viewMode === "dashboard",
-                    );
-                    document.body.classList.toggle("edit-mode", isEditMode);
+                viewModeSelect.value = viewMode;
+                dashboardViewModeSelect.value = viewMode;
+            }
 
-                    editToggle.textContent = isEditMode ? "Done" : "Configure";
-                    compactDoneBtn.textContent = "Done";
-
-                    viewModeSelect.value = viewMode;
-                    dashboardViewModeSelect.value = viewMode;
-                }
-
-                function setEditMode(nextValue) {
-                    isEditMode = Boolean(nextValue);
-
-                    /*
-                      Leaving edit mode also clears any partially selected
-                      timezone preview.
-                    */
-                    if (!isEditMode) {
-                        selectedZone = "";
-                        input.value = "";
-                        previewCard.classList.add("hidden");
-                    }
-
-                    syncModeClasses();
-                    render();
-                    tick();
-                }
+            function setEditMode(nextValue) {
+                isEditMode = Boolean(nextValue);
 
                 /*
-                  ============================================================
-                  Rendering
-                  ============================================================
+                  Leaving edit mode also clears any partially selected
+                  timezone preview.
                 */
-
-                function render() {
-                    ensureCompactClockExists();
-                    renderCompactClockSelect();
-
-                    grid.innerHTML = "";
-
-                    const visibleClocks =
-                        viewMode === "compact"
-                            ? clocks.filter(
-                                  (clock) => clock.id === compactClockId,
-                              )
-                            : clocks;
-
-                    visibleClocks.forEach((clock) => {
-                        const card = renderClockCard(clock);
-                        grid.appendChild(card);
-                        fitCityText(card);
-                    });
+                if (!isEditMode) {
+                    selectedZone = "";
+                    input.value = "";
+                    previewCard.classList.add("hidden");
                 }
 
-                function renderCompactClockSelect() {
-                    compactClockSelect.innerHTML = "";
+                syncModeClasses();
+                render();
+                tick();
+            }
 
-                    clocks.forEach((clock) => {
-                        const option = document.createElement("option");
-                        option.value = clock.id;
-                        option.textContent = displayLabel(clock);
-                        compactClockSelect.appendChild(option);
-                    });
+            /*
+              ============================================================
+              Rendering
+              ============================================================
+            */
 
-                    compactClockSelect.value = compactClockId;
-                }
+            function render() {
+                ensureCompactClockExists();
+                renderCompactClockSelect();
 
-                function renderClockCard(clock) {
-                    const card = document.createElement("article");
-                    card.className = `clock-card ${clock.locked ? "local" : ""}`;
-                    card.dataset.id = clock.id;
+                grid.innerHTML = "";
 
-                    /*
-                      Dragging is only active in gallery edit mode.
-                      In compact mode, there is only one visible card, so drag
-                      ordering would be confusing and unnecessary.
-                    */
-                    card.draggable =
-                        isEditMode && viewMode === "dashboard" ? true : false;
+                const visibleClocks =
+                    viewMode === "compact"
+                        ? clocks.filter(
+                            (clock) => clock.id === compactClockId,
+                        )
+                        : clocks;
 
-                    const ticks = Array.from({ length: 60 }, (_, i) => {
-                        const major = i % 5 === 0 ? "major" : "";
-                        return `<span class="tick ${major}" style="transform: rotate(${i * 6}deg);"></span>`;
-                    }).join("");
+                visibleClocks.forEach((clock) => {
+                    const card = renderClockCard(clock);
+                    grid.appendChild(card);
+                    fitCityText(card);
+                });
+            }
 
-                    const label = displayLabel(clock);
+            function renderCompactClockSelect() {
+                compactClockSelect.innerHTML = "";
 
-                    card.innerHTML = `
+                clocks.forEach((clock) => {
+                    const option = document.createElement("option");
+                    option.value = clock.id;
+                    option.textContent = displayLabel(clock);
+                    compactClockSelect.appendChild(option);
+                });
+
+                compactClockSelect.value = compactClockId;
+            }
+
+            function renderClockCard(clock) {
+                const card = document.createElement("article");
+                card.className = `clock-card ${clock.locked ? "local" : ""}`;
+                card.dataset.id = clock.id;
+
+                /*
+                  Dragging is only active in gallery edit mode.
+                  In compact mode, there is only one visible card, so drag
+                  ordering would be confusing and unnecessary.
+                */
+                card.draggable =
+                    isEditMode && viewMode === "dashboard" ? true : false;
+
+                const ticks = Array.from({ length: 60 }, (_, i) => {
+                    const major = i % 5 === 0 ? "major" : "";
+                    return `<span class="tick ${major}" style="transform: rotate(${i * 6}deg);"></span>`;
+                }).join("");
+
+                const label = displayLabel(clock);
+
+                card.innerHTML = `
                         <button class="delete" title="Remove clock" type="button">×</button>
 
                         <div class="clock">
@@ -1651,381 +1636,387 @@
                         </div>
                     `;
 
-                    attachCardEvents(card, clock);
-                    return card;
-                }
+                attachCardEvents(card, clock);
+                return card;
+            }
 
-                /*
-                  ============================================================
-                  Card events: delete, rename, drag/drop
-                  ============================================================
-                */
+            /*
+              ============================================================
+              Card events: delete, rename, drag/drop
+              ============================================================
+            */
 
-                function attachCardEvents(card, clock) {
-                    const deleteBtn = card.querySelector(".delete");
-                    const nameInput = card.querySelector("[data-name-input]");
+            function attachCardEvents(card, clock) {
+                const deleteBtn = card.querySelector(".delete");
+                const nameInput = card.querySelector("[data-name-input]");
 
-                    deleteBtn.addEventListener("click", () => {
-                        if (clock.locked) return;
+                deleteBtn.addEventListener("click", () => {
+                    if (clock.locked) return;
 
-                        clocks = clocks.filter((item) => item.id !== clock.id);
+                    clocks = clocks.filter((item) => item.id !== clock.id);
 
-                        // Close the detail modal if its clock was just deleted.
-                        if (activeDetailClockId === clock.id) {
-                            closeClockDetails();
-                        }
-
-                        /*
-                          If the deleted clock was being displayed in compact
-                          mode, choose a safe replacement.
-                        */
-                        if (compactClockId === clock.id) {
-                            compactClockId = clocks[0]?.id || null;
-                            saveViewSettings();
-                        }
-
-                        saveClocks();
-                        render();
-                        tick();
-                        updatePreview();
-                    });
-
-                    nameInput.addEventListener("input", (event) => {
-                        const nextLabel =
-                            event.target.value.trim() ||
-                            friendlyName(clock.zone);
-                        const targetClock = clocks.find(
-                            (item) => item.id === clock.id,
-                        );
-
-                        if (!targetClock) return;
-
-                        targetClock.label = nextLabel;
-                        card.querySelector("[data-city]").textContent =
-                            nextLabel;
-
-                        fitCityText(card);
-                        saveClocks();
-                        renderCompactClockSelect();
-                    });
+                    // Close the detail modal if its clock was just deleted.
+                    if (activeDetailClockId === clock.id) {
+                        closeClockDetails();
+                    }
 
                     /*
-                      In normal viewing mode, clicking a clock opens details.
-                      In edit mode, clicks are reserved for editing controls.
+                      If the deleted clock was being displayed in compact
+                      mode, choose a safe replacement.
                     */
-                    card.addEventListener("click", (event) => {
-                        if (isEditMode) return;
-                        if (event.target.closest("button, input, select"))
-                            return;
-
-                        openClockDetails(clock.id);
-                    });
-
-                    card.addEventListener("dragstart", (event) => {
-                        if (!isEditMode || viewMode !== "dashboard") {
-                            event.preventDefault();
-                            return;
-                        }
-
-                        draggedClockId = clock.id;
-                        card.classList.add("dragging");
-                        event.dataTransfer.effectAllowed = "move";
-                        event.dataTransfer.setData("text/plain", clock.id);
-                    });
-
-                    card.addEventListener("dragend", () => {
-                        draggedClockId = null;
-
-                        document
-                            .querySelectorAll(".clock-card")
-                            .forEach((item) => {
-                                item.classList.remove("dragging", "drop-cue");
-                            });
-                    });
-
-                    card.addEventListener("dragover", (event) => {
-                        if (
-                            !isEditMode ||
-                            viewMode !== "dashboard" ||
-                            !draggedClockId ||
-                            draggedClockId === clock.id
-                        ) {
-                            return;
-                        }
-
-                        event.preventDefault();
-                        event.dataTransfer.dropEffect = "move";
-                        card.classList.add("drop-cue");
-                    });
-
-                    card.addEventListener("dragleave", () => {
-                        card.classList.remove("drop-cue");
-                    });
-
-                    card.addEventListener("drop", (event) => {
-                        if (
-                            !isEditMode ||
-                            viewMode !== "dashboard" ||
-                            !draggedClockId ||
-                            draggedClockId === clock.id
-                        ) {
-                            return;
-                        }
-
-                        event.preventDefault();
-                        card.classList.remove("drop-cue");
-                        moveClock(draggedClockId, clock.id);
-                    });
-                }
-
-                function moveClock(draggedId, targetId) {
-                    const fromIndex = clocks.findIndex(
-                        (clock) => clock.id === draggedId,
-                    );
-                    const toIndex = clocks.findIndex(
-                        (clock) => clock.id === targetId,
-                    );
-
-                    if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex)
-                        return;
-
-                    const [moved] = clocks.splice(fromIndex, 1);
-                    clocks.splice(toIndex, 0, moved);
+                    if (compactClockId === clock.id) {
+                        compactClockId = clocks[0]?.id || null;
+                        saveViewSettings();
+                    }
 
                     saveClocks();
                     render();
                     tick();
-                }
-
-                /*
-                  ============================================================
-                  Live ticking
-                  ============================================================
-                */
-
-                function tick() {
-                    document.querySelectorAll(".clock-card").forEach((card) => {
-                        const clock = clocks.find(
-                            (item) => item.id === card.dataset.id,
-                        );
-
-                        if (!clock) return;
-
-                        const time = numericTime(clock.zone);
-
-                        /*
-                          Smooth sweeping hand math.
-                          The digital text still displays whole seconds, but
-                          the analog hands use milliseconds for fluid motion.
-                        */
-                        const smoothSecond =
-                            time.second + time.millisecond / 1000;
-                        const smoothMinute = time.minute + smoothSecond / 60;
-                        const smoothHour = (time.hour % 12) + smoothMinute / 60;
-
-                        const secondDeg = smoothSecond * 6;
-                        const minuteDeg = smoothMinute * 6;
-                        const hourDeg = smoothHour * 30;
-
-                        card.querySelector("[data-hour]").style.transform =
-                            `rotate(${hourDeg}deg)`;
-                        card.querySelector("[data-minute]").style.transform =
-                            `rotate(${minuteDeg}deg)`;
-                        card.querySelector("[data-second]").style.transform =
-                            `rotate(${secondDeg}deg)`;
-
-                        card.querySelector("[data-digital]").textContent =
-                            time.digital;
-                        card.querySelector("[data-date]").textContent =
-                            time.date;
-                        card.querySelector("[data-offset]").textContent =
-                            time.offset;
-                    });
-
-                    /*
-                      Keep preview data live while editing.
-                      This does not save to storage.
-                    */
                     updatePreview();
-                    refreshOpenClockDetails();
-                }
+                });
 
-                /*
-                  ============================================================
-                  Clock detail modal
-                  ============================================================
-                */
-
-                function openClockDetails(clockId) {
-                    const clock = clocks.find((item) => item.id === clockId);
-                    if (!clock) return;
-
-                    /*
-                      Store the active clock ID before opening the modal.
-                      The live tick loop uses this ID to refresh the modal time.
-                    */
-                    activeDetailClockId = clockId;
-                    updateClockDetails(clock);
-                    detailOverlay.classList.add("open");
-                    detailOverlay.setAttribute("aria-hidden", "false");
-                }
-
-                function updateClockDetails(clock) {
-                    const time = numericTime(clock.zone);
-
-                    detailTitle.textContent = displayLabel(clock);
-                    detailZone.textContent = clock.zone || "System Local Time";
-                    detailTime.textContent = time.digital;
-                    detailDate.textContent = time.date;
-                    detailOffset.textContent = time.offset;
-                }
-
-                function closeClockDetails() {
-                    activeDetailClockId = null;
-                    detailOverlay.classList.remove("open");
-                    detailOverlay.setAttribute("aria-hidden", "true");
-                }
-
-                function refreshOpenClockDetails() {
-                    if (!detailOverlay.classList.contains("open")) return;
-                    if (!activeDetailClockId) return;
-
-                    const activeClock = clocks.find(
-                        (clock) => clock.id === activeDetailClockId,
+                nameInput.addEventListener("input", (event) => {
+                    const nextLabel =
+                        event.target.value.trim() ||
+                        friendlyName(clock.zone);
+                    const targetClock = clocks.find(
+                        (item) => item.id === clock.id,
                     );
 
-                    if (activeClock) updateClockDetails(activeClock);
-                }
+                    if (!targetClock) return;
+
+                    targetClock.label = nextLabel;
+                    card.querySelector("[data-city]").textContent =
+                        nextLabel;
+
+                    fitCityText(card);
+                    saveClocks();
+                    renderCompactClockSelect();
+                });
 
                 /*
-                  ============================================================
-                  Search/add preview
-                  ============================================================
+                  In normal viewing mode, clicking a clock opens details.
+                  In edit mode, clicks are reserved for editing controls.
                 */
+                card.addEventListener("click", (event) => {
+                    if (isEditMode) return;
+                    if (event.target.closest("button, input, select")) return;
 
-                function updatePreview() {
-                    const zone = input.value.trim();
-                    const isValidZone = supportedTimezones.includes(zone);
-                    const isDuplicate = clocks.some(
-                        (clock) => clock.zone === zone,
-                    );
+                    openClockDetails(clock.id);
+                });
 
-                    if (!isEditMode || !isValidZone || isDuplicate) {
-                        previewCard.classList.add("hidden");
-                        selectedZone = "";
+                card.addEventListener("dragstart", (event) => {
+                    if (!isEditMode || viewMode !== "dashboard") {
+                        event.preventDefault();
                         return;
                     }
 
-                    const time = numericTime(zone);
-
-                    selectedZone = zone;
-                    previewName.textContent = friendlyName(zone);
-                    previewZone.textContent = zone;
-                    previewOffset.textContent = time.offset;
-                    previewTime.textContent = time.digital;
-
-                    previewCard.classList.remove("hidden");
-                }
-
-                function addClock() {
-                    const zone = selectedZone;
-                    if (!zone) return;
-
-                    const newClock = {
-                        id: makeId(),
-                        zone,
-                        label: friendlyName(zone),
-                    };
-
-                    clocks.push(newClock);
-
-                    /*
-                      If this is the first user-added clock, it can immediately
-                      become the compact display clock. This feels responsive.
-                    */
-                    compactClockId = newClock.id;
-
-                    saveClocks();
-                    saveViewSettings();
-
-                    input.value = "";
-                    selectedZone = "";
-                    previewCard.classList.add("hidden");
-
-                    render();
-                    tick();
-                }
-
-                /*
-                  ============================================================
-                  Event bindings and initial render
-                  ============================================================
-                */
-
-                editToggle.addEventListener("click", () => {
-                    setEditMode(!isEditMode);
+                    draggedClockId = clock.id;
+                    card.classList.add("dragging");
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", clock.id);
                 });
 
-                compactEditLink.addEventListener("click", () => {
-                    setEditMode(true);
+                card.addEventListener("dragend", () => {
+                    draggedClockId = null;
+
+                    document
+                        .querySelectorAll(".clock-card")
+                        .forEach((item) => {
+                            item.classList.remove("dragging", "drop-cue");
+                        });
                 });
 
-                compactDoneBtn.addEventListener("click", () => {
-                    setEditMode(false);
-                });
-
-                compactClockSelect.addEventListener("change", (event) => {
-                    compactClockId = event.target.value;
-                    saveViewSettings();
-                    render();
-                    tick();
-                });
-
-                viewModeSelect.addEventListener("change", (event) => {
-                    setViewMode(event.target.value);
-                });
-
-                dashboardViewModeSelect.addEventListener("change", (event) => {
-                    setViewMode(event.target.value);
-                });
-
-                detailClose.addEventListener("click", closeClockDetails);
-
-                detailOverlay.addEventListener("click", (event) => {
-                    if (event.target === detailOverlay) {
-                        closeClockDetails();
+                card.addEventListener("dragover", (event) => {
+                    if (
+                        !isEditMode ||
+                        viewMode !== "dashboard" ||
+                        !draggedClockId ||
+                        draggedClockId === clock.id
+                    ) {
+                        return;
                     }
+
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                    card.classList.add("drop-cue");
                 });
 
-                document.addEventListener("keydown", (event) => {
-                    if (event.key === "Escape") {
-                        closeClockDetails();
+                card.addEventListener("dragleave", () => {
+                    card.classList.remove("drop-cue");
+                });
+
+                card.addEventListener("drop", (event) => {
+                    if (
+                        !isEditMode ||
+                        viewMode !== "dashboard" ||
+                        !draggedClockId ||
+                        draggedClockId === clock.id
+                    ) {
+                        return;
                     }
+
+                    event.preventDefault();
+                    card.classList.remove("drop-cue");
+                    moveClock(draggedClockId, clock.id);
                 });
+            }
 
-                addBtn.addEventListener("click", addClock);
+            function moveClock(draggedId, targetId) {
+                const fromIndex = clocks.findIndex(
+                    (clock) => clock.id === draggedId,
+                );
+                const toIndex = clocks.findIndex(
+                    (clock) => clock.id === targetId,
+                );
 
-                input.addEventListener("input", updatePreview);
-                input.addEventListener("change", updatePreview);
+                if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex)
+                    return;
 
-                input.addEventListener("keydown", (event) => {
-                    if (event.key === "Enter") addClock();
-                });
+                const [moved] = clocks.splice(fromIndex, 1);
+                clocks.splice(toIndex, 0, moved);
 
-                populateTimezoneList();
-                syncModeClasses();
+                saveClocks();
                 render();
                 tick();
+            }
+
+            /*
+              ============================================================
+              Live ticking
+              ============================================================
+            */
+
+            function tick() {
+                document.querySelectorAll(".clock-card").forEach((card) => {
+                    const clock = clocks.find(
+                        (item) => item.id === card.dataset.id,
+                    );
+
+                    if (!clock) return;
+
+                    const time = numericTime(clock.zone);
+
+                    /*
+                      Smooth sweeping hand math.
+                      The digital text still displays whole seconds, but
+                      the analog hands use milliseconds for fluid motion.
+                    */
+                    const smoothSecond =
+                        time.second + time.millisecond / 1000;
+                    const smoothMinute = time.minute + smoothSecond / 60;
+                    const smoothHour = (time.hour % 12) + smoothMinute / 60;
+
+                    const secondDeg = smoothSecond * 6;
+                    const minuteDeg = smoothMinute * 6;
+                    const hourDeg = smoothHour * 30;
+
+                    card.querySelector("[data-hour]").style.transform =
+                        `rotate(${hourDeg}deg)`;
+                    card.querySelector("[data-minute]").style.transform =
+                        `rotate(${minuteDeg}deg)`;
+                    card.querySelector("[data-second]").style.transform =
+                        `rotate(${secondDeg}deg)`;
+
+                    card.querySelector("[data-digital]").textContent =
+                        time.digital;
+                    card.querySelector("[data-date]").textContent =
+                        time.date;
+                    card.querySelector("[data-offset]").textContent =
+                        time.offset;
+                });
 
                 /*
-                  50ms creates a smooth sweep.
-                  Storage is never written inside tick().
+                  Keep preview data live while editing.
+                  This does not save to storage.
                 */
-                setInterval(tick, 50);
-            })();
-        </script>
-    </body>
+                updatePreview();
+                refreshOpenClockDetails();
+            }
+
+
+            /*
+              ============================================================
+              Clock detail modal
+              ============================================================
+            */
+
+            function openClockDetails(clockId) {
+                const clock = clocks.find((item) => item.id === clockId);
+                if (!clock) return;
+
+                /*
+                  Store the active clock ID before opening the modal.
+                  The live tick loop uses this ID to refresh the modal time.
+                */
+                activeDetailClockId = clockId;
+                updateClockDetails(clock);
+                detailOverlay.classList.add("open");
+                detailOverlay.setAttribute("aria-hidden", "false");
+            }
+
+            function updateClockDetails(clock) {
+                const time = numericTime(clock.zone);
+
+                detailTitle.textContent = displayLabel(clock);
+                detailZone.textContent = clock.zone || "System Local Time";
+                detailTime.textContent = time.digital;
+                detailDate.textContent = time.date;
+                detailOffset.textContent = time.offset;
+            }
+
+            function closeClockDetails() {
+                activeDetailClockId = null;
+                detailOverlay.classList.remove("open");
+                detailOverlay.setAttribute("aria-hidden", "true");
+            }
+
+            function refreshOpenClockDetails() {
+                if (!detailOverlay.classList.contains("open")) return;
+                if (!activeDetailClockId) return;
+
+                const activeClock = clocks.find(
+                    (clock) => clock.id === activeDetailClockId,
+                );
+
+                if (activeClock) updateClockDetails(activeClock);
+            }
+
+            /*
+              ============================================================
+              Search/add preview
+              ============================================================
+            */
+
+            function updatePreview() {
+                const zone = input.value.trim();
+                const isValidZone = supportedTimezones.includes(zone);
+                const isDuplicate = clocks.some(
+                    (clock) => clock.zone === zone,
+                );
+
+                if (!isEditMode || !isValidZone || isDuplicate) {
+                    previewCard.classList.add("hidden");
+                    selectedZone = "";
+                    return;
+                }
+
+                const time = numericTime(zone);
+
+                selectedZone = zone;
+                previewName.textContent = friendlyName(zone);
+                previewZone.textContent = zone;
+                previewOffset.textContent = time.offset;
+                previewTime.textContent = time.digital;
+
+                previewCard.classList.remove("hidden");
+            }
+
+            function addClock() {
+                const zone = selectedZone;
+                if (!zone) return;
+
+                const newClock = {
+                    id: makeId(),
+                    zone,
+                    label: friendlyName(zone),
+                };
+
+                clocks.push(newClock);
+
+                /*
+                  If this is the first user-added clock, it can immediately
+                  become the compact display clock. This feels responsive.
+                */
+                compactClockId = newClock.id;
+
+                saveClocks();
+                saveViewSettings();
+
+                input.value = "";
+                selectedZone = "";
+                previewCard.classList.add("hidden");
+
+                render();
+                tick();
+            }
+
+            /*
+              ============================================================
+              Event bindings and initial render
+              ============================================================
+            */
+
+            editToggle.addEventListener("click", () => {
+                setEditMode(!isEditMode);
+            });
+
+            compactEditLink.addEventListener("click", () => {
+                setEditMode(true);
+            });
+
+            compactSaveBtn.addEventListener("click", () => {
+                setEditMode(false);
+            });
+
+            compactClockSelect.addEventListener("change", (event) => {
+                compactClockId = event.target.value;
+                saveViewSettings();
+                render();
+                tick();
+            });
+
+            viewModeSelect.addEventListener("change", (event) => {
+                setViewMode(event.target.value);
+            });
+
+            dashboardViewModeSelect.addEventListener("change", (event) => {
+                setViewMode(event.target.value);
+            });
+
+            gallerySaveBtn.addEventListener("click", () => {
+                setEditMode(false);
+            });
+
+            detailClose.addEventListener("click", closeClockDetails);
+
+            detailOverlay.addEventListener("click", (event) => {
+                if (event.target === detailOverlay) {
+                    closeClockDetails();
+                }
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    closeClockDetails();
+                }
+            });
+
+            addBtn.addEventListener("click", addClock);
+
+            input.addEventListener("input", updatePreview);
+            input.addEventListener("change", updatePreview);
+
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") addClock();
+            });
+
+            populateTimezoneList();
+            syncModeClasses();
+            render();
+            tick();
+
+            /*
+              50ms creates a smooth sweep.
+              Storage is never written inside tick().
+            */
+            setInterval(tick, 50);
+        })();
+    </script>
+</body>
+
 </html>
+
 
 <!--
 PROJECT REPRODUCTION PROMPT
@@ -2038,7 +2029,7 @@ Build a modern interactive timezone clock app with the following features:
 - Dark modern background with gradient accents.
 - Header title and subtitle in Gallery mode only.
 - Compact mode must hide the title/subtitle and show only the selected clock face plus a subtle Configure link.
-- Use the view names Compact and Gallery. Internally, the Gallery value may still be stored as "dashboard" if useful, but the UI should say Gallery.
+- Use the view names Compact and Gallery. Internally, store Gallery as "dashboard" so mode checks, CSS classes, and drag/drop logic stay aligned.
 - Clock cards displayed in a centered wrapping layout so incomplete rows are centered.
 - Each analog clock should be large, about 280px, with a sleek dark gradient smartwatch-style face.
 - All clock text must appear inside the analog clock face like smartwatch complications.
@@ -2070,7 +2061,7 @@ Initialize with:
 - Compact should be the default view.
 - Persist viewMode in localStorage.
 - Persist the currently selected compact clock ID in localStorage.
-- In Gallery mode, render all clocks in a centered wrapping grid.
+- In Gallery mode, render all clocks in a centered wrapping grid and allow drag/drop reordering while editing.
 - In Compact mode, render only one selected clock face.
 - Do not duplicate clock state. Compact and Gallery modes must use the same clocks array.
 - Do not duplicate time calculation code. Both modes must use the same tick function and renderClockCard behavior.
@@ -2087,17 +2078,18 @@ Initialize with:
 - Compact edit controls should show:
   - Display Clock dropdown listing all saved clocks by label
   - View dropdown allowing Compact or Gallery
-  - Done button
-- Clicking Done hides the compact controls and returns to clock-only Compact view.
+  - Save button
+- Clicking Save hides the compact controls and returns to clock-only Compact view.
 - The existing edit/search/add panel should also be visible while editing.
 
 6. Gallery edit mode
 - In Gallery mode, show the grid and a subtle Configure link below the grid, matching the Compact view style.
-- Clicking Configure enters edit mode and changes the link text to Done.
-- Clicking Done exits edit mode.
+- Clicking Configure enters edit mode and changes the link text to Save.
+- Clicking Save exits edit mode.
 - Add a hidden edit panel below the grid that only appears in edit mode.
 - Move all search/add functionality into this edit panel.
 - While editing in Gallery mode, show a small View dropdown so the user can switch back to Compact mode.
+- While editing in Gallery mode, show a Save button that exits configuration mode and returns to the normal Gallery view.
 - In the edit panel, show a light label like: “Search for a timezone to add a clock.”
 
 7. Search/add behavior
@@ -2140,9 +2132,9 @@ Initialize with:
 - Store viewMode and compact selected clock ID separately.
 - Do not save inside the tick loop.
 - Use versioned keys like:
-  timezoneDashboard.clocks.v1
-  timezoneDashboard.viewMode.v1
-  timezoneDashboard.compactSelectedClockId.v1
+  timezoneGallery.clocks.v1
+  timezoneGallery.viewMode.v1
+  timezoneGallery.compactSelectedClockId.v1
 
 11. Polish
 - Use subtle transitions for panels and modal appearance.
